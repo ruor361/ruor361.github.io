@@ -1,20 +1,20 @@
-name: Deploy to GitHub Pages
+name: Verify and deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
-# Pages 部署需要的权限
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 确保只有一个部署任务同时运行
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -22,33 +22,46 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.14.4
           run_install: false
-          
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-      
-      - name: Build site
-        run: pnpm run build
 
-      - name: Create .nojekyll file
-        run: touch dist/.nojekyll
-      
-      - name: Upload artifact
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check Astro
+        run: pnpm check
+
+      - name: Check types
+        run: pnpm type-check
+
+      - name: Check formatting
+        run: pnpm exec biome check ./src
+
+      - name: Build site
+        run: pnpm build
+
+      - name: Configure Pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist  # Astro默认构建输出目录
+          path: dist
 
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

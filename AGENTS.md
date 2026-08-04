@@ -1,5 +1,9 @@
 # Repository Guidelines
 
+## Ruo identity boundary
+
+This repository belongs only to the `ruor361` GitHub identity and the public author `Ruo`. Use the repository-local Git author `Ruo <260375327+ruor361@users.noreply.github.com>`. Do not copy identity, analytics, comments, domains, avatars, email addresses, or social links from any other site. The remote must remain `ruor361/ruor361.github.io`.
+
 ## Project Structure & Module Organization
 
 Firefly is an Astro 7 site with Svelte islands and TypeScript configuration. Main source code lives in `src/`: routes in `src/pages`, layouts in `src/layouts`, reusable UI in `src/components`, styles in `src/styles`, content in `src/content`, helpers in `src/utils`, and Markdown/HTML plugins in `src/plugins`. Site configuration is split across `src/config` with matching type definitions in `src/types`; prefer imports from `@/config` when available. Static files served directly belong in `public`, source-managed images in `src/assets`, docs in `docs` and `Firefly-Docs`, and automation in `scripts`.
