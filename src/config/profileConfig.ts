@@ -1,7 +1,7 @@
 import type { ProfileConfig } from "../types/profileConfig";
 
 export const profileConfig: ProfileConfig = {
-	avatar: "/assets/images/ruo-avatar.svg",
+	avatar: "/assets/images/ruo-avatar.png",
 	name: "Ruo",
 	bio: "写下想法，也留下声音与影像。",
 	links: [
